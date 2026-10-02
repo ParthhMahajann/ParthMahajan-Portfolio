@@ -9,9 +9,9 @@ const weights = [
 export function NextStepPreview() {
   return <div className="technical-preview ranking-preview">
     <span className="preview-name">NextStep AI</span>
-    <h4>What makes a job<br/>a better match?</h4>
+    <p className="preview-title">What makes a job<br/>a better match?</p>
     <dl className="ranking-weights">{weights.map(({label, value}) => <div key={label}>
-      <dt>{label}</dt><dd>{value}%</dd><span style={{width:`${value * 2}%`}} aria-hidden="true" />
+      <dt>{label}</dt><dd>{value}%</dd><span style={{width:`${value}%`}} aria-hidden="true" />
     </div>)}</dl>
     <p className="preview-caption">Default ranking weights from the project source.</p>
   </div>;
@@ -20,7 +20,7 @@ export function NextStepPreview() {
 export function SentinelPreview() {
   return <div className="technical-preview recovery-preview">
     <span className="preview-name">SentinelD</span>
-    <h4>A recovery action<br/>has to earn approval.</h4>
+    <p className="preview-title">A recovery action<br/>has to earn approval.</p>
     <ol className="recovery-steps">
       <li><strong>Collect</strong><span>Linux telemetry</span></li>
       <li><strong>Detect</strong><span>Rules & anomalies</span></li>

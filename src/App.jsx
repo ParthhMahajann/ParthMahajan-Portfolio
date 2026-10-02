@@ -1,66 +1,47 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
-import { ArrowUpRight, ArrowDown, ArrowRight, Download, Mail, MapPin, Code2, Sparkles, MoveUpRight, Play, Pause, Copy, Check, BriefcaseBusiness, UserRound, Layers, Terminal, ShieldCheck, Activity, Cpu } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowUpRight, ArrowDown, ArrowUp, Download, Play, Copy, Check } from 'lucide-react';
 import { Github, Linkedin } from './BrandIcons';
 import { email, profile, projects, experience } from './content';
+import { NextStepPreview, SentinelPreview } from './TechnicalPreview';
 import ProjectDialog from './ProjectDialog';
-import SceneBoundary from './SceneBoundary';
 
-const HeroScene = lazy(() => import('./HeroScene'));
-const navItems = [{ id: 'home', label: 'Home', icon: Layers }, { id: 'work', label: 'Work', icon: BriefcaseBusiness }, { id: 'about', label: 'About', icon: UserRound }, { id: 'contact', label: 'Contact', icon: Mail }];
+const navItems = [
+  { id: 'work', label: 'Work' },
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'contact', label: 'Contact' },
+];
 
-function NextStepArtwork() {
-  return <div className="nextstep-art" aria-hidden="true">
-    <div className="nextstep-grid" />
-    <div className="nextstep-brand"><span className="nextstep-symbol">n<span>↗</span></span><span>nextstep<span className="ai-label">AI</span></span></div>
-    <p>Your potential.<br/>A new direction.</p>
-    <div className="job-mini job-back"><span className="job-icon"><Code2 size={19}/></span><div>AI Engineer<small>Find your next opportunity</small></div><ArrowUpRight size={18}/></div>
-    <div className="job-mini job-front"><span className="match-symbol"><Sparkles size={20}/></span><div>More than keywords.<small>Match skills. Discover possibilities.</small></div><span className="match-line"/></div>
-    <span className="art-foot">Discover. Prepare. Take the next step.</span>
-  </div>;
-}
-
-function SentinelArtwork() {
-  return <div className="sentinel-art" aria-hidden="true">
-    <div className="sentinel-top"><span><span className="sentinel-mark">s</span>SentinelD</span><span className="system-label"><i/>Human in the loop</span></div>
-    <div className="radar"><div className="radar-ring r1"/><div className="radar-ring r2"/><div className="radar-ring r3"/><div className="radar-cross"/><div className="radar-core"><ShieldCheck size={42} strokeWidth={1.1}/></div><i className="radar-dot d1"/><i className="radar-dot d2"/></div>
-    <div className="system-step detect"><Activity size={16}/><span>Detect<small>Telemetry & anomalies</small></span></div>
-    <div className="system-step review"><UserRound size={16}/><span>Review<small>Operator approval</small></span></div>
-    <div className="system-step recover"><Terminal size={16}/><span>Recover<small>Constrained actions</small></span></div>
-    <span className="sentinel-footer">Observe. Understand. Act with confidence.</span>
-  </div>;
-}
-
-function ProjectCard({ project, onOpen, index }) {
+function ProjectCard({ project, onOpen }) {
   return <article className={`project-card project-${project.id}`}>
     <button className="project-art" onClick={() => onOpen(project)} aria-label={`View ${project.name} project`}>
-      {project.id === 'nextstep' ? <NextStepArtwork/> : project.id === 'sentineld' ? <SentinelArtwork/> : <img src={project.image} alt={project.id === 'looppop' ? 'LOOPPOP Lime, Guava and Jamun sparkling-drink can concepts' : 'Ruby ORVEN headphones surrounded by red poppies in warm light'} loading="lazy" width={project.id === 'orven' ? 720 : 1920} height={project.id === 'orven' ? 1280 : 1080}/>}
-      <span className="project-action">{project.video ? <Play size={19} fill="currentColor"/> : <ArrowUpRight size={22}/>}</span>
-      {project.video && <span className="film-label">Watch the concept film <span>0:24</span></span>}
+      {project.id === 'nextstep' ? <NextStepPreview /> : project.id === 'sentineld' ? <SentinelPreview /> :
+        <img src={project.image} alt={project.id === 'looppop' ? 'Three LOOPPOP sparkling-drink can designs: Lime, Guava and Jamun' : 'Ruby ORVEN headphones among red poppies'} loading="lazy" width={project.id === 'orven' ? 720 : 1920} height={project.id === 'orven' ? 1280 : 1080} />}
+      {project.video && <span className="film-label"><Play size={16} fill="currentColor" />Play film<span>24 sec</span></span>}
     </button>
-    <div className="project-meta"><div><span className="project-type">{project.type}</span><h3><button onClick={() => onOpen(project)}>{project.name}<ArrowUpRight size={20}/></button></h3><p>{project.line}</p></div><span className="project-index">/{String(index + 1).padStart(2, '0')}</span></div>
-    <div className="tag-list">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
+    <div className="project-meta">
+      <p className="project-type">{project.status}</p>
+      <h3><button onClick={() => onOpen(project)}>{project.name}</button></h3>
+      <p className="project-description">{project.line}</p>
+    </div>
+    <ul className="tag-list" aria-label="Project tools">{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>
+    <div className="project-links">
+      <button onClick={() => onOpen(project)}>{project.video ? 'About the film' : 'Project details'}<ArrowUpRight size={17}/></button>
+      {project.href && <a href={project.href} target="_blank" rel="noreferrer"><Github size={16}/>View source<span className="sr-only"> for {project.name}</span></a>}
+    </div>
   </article>;
 }
 
 export default function App() {
   const [project, setProject] = useState(null);
-  const [active, setActive] = useState('home');
-  const [motion, setMotion] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [active, setActive] = useState('');
   const [copyState, setCopyState] = useState('idle');
-  useEffect(() => {
-    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const change = () => setMotion(!preference.matches);
-    preference.addEventListener('change', change);
-    return () => preference.removeEventListener('change', change);
-  }, []);
-  useEffect(() => {
-    document.documentElement.dataset.motion = motion ? 'on' : 'off';
-  }, [motion]);
+
   useEffect(() => {
     const update = () => {
-      const sections = navItems.map(({ id }) => document.getElementById(id));
-      const current = sections.filter(section => section.getBoundingClientRect().top < window.innerHeight * .48).at(-1);
-      if (current) setActive(current.id);
+      const current = navItems.map(({ id }) => document.getElementById(id))
+        .filter(section => section.getBoundingClientRect().top < window.innerHeight * .45).at(-1);
+      setActive(current?.id || '');
     };
     window.addEventListener('scroll', update, { passive: true });
     update();
@@ -78,39 +59,84 @@ export default function App() {
 
   return <>
     <a className="skip-link" href="#work">Skip to selected work</a>
-    <header className="site-header"><a className="wordmark" href="#home" aria-label="Parth Mahajan, home">pm<span>●</span></a><a className="header-location" href="#about"><span className="status-dot"/>Based in Bhopal, India</a><a className="resume-link" href={profile.resume} download>Download resume<Download size={16}/></a></header>
+    <header className="site-header">
+      <a className="wordmark" href="#home" aria-label="Parth Mahajan, home">pm<span>.</span></a>
+      <nav className="main-nav" aria-label="Main navigation">
+        {navItems.map(({ id, label }) => <a key={id} href={`#${id}`} aria-current={active === id ? 'location' : undefined}>{label}</a>)}
+      </nav>
+      <a className="resume-link" href={profile.resume} download>Resume<Download size={16}/></a>
+    </header>
     <main>
       <section id="home" className="hero" aria-labelledby="hero-title">
-        <div className="hero-topline"><span><span className="mini-cross">✳</span> Code, curiosity & a creative eye.</span><span className="hero-edition">Portfolio / 2026</span></div>
+        <div className="hero-topline"><span>Computer science, with a creative practice.</span><span>Bhopal, India</span></div>
         <div className="hero-main">
-          <h1 id="hero-title"><span>parth</span><span>mahajan<span className="name-dot">.</span></span></h1>
-          <div className="hero-sculpture"><div className="sculpture-glow"/><div className="sculpture-fallback"><i/><i/><i/></div><SceneBoundary><Suspense fallback={null}><HeroScene motion={motion}/></Suspense></SceneBoundary></div>
-          <div className="hero-side-note"><span className="line"/><span>Engineer in the making.<br/>Creator at heart.</span></div>
+          <h1 id="hero-title"><span>parth</span><span>mahajan</span></h1>
+          <figure className="hero-feature">
+            <button onClick={() => setProject(projects[3])} aria-label="Watch ORVEN — In Bloom">
+              <img src="/media/orven-poster.png" alt="ORVEN headphones and poppies, from the In Bloom concept film" width="720" height="1280" fetchPriority="high"/>
+              <span className="hero-play"><Play size={18} fill="currentColor"/>Play film</span>
+            </button>
+            <figcaption><span>ORVEN — In Bloom</span><span>Independent concept / 24 sec</span></figcaption>
+          </figure>
+          <div className="hero-identity">
+            <p className="hero-role">AI applications.<br/>Independent product films.</p>
+            <p className="hero-intro">I’m a computer science undergraduate building Python services and AI tools. I also develop product-film concepts with Elara Visuals.</p>
+            <a className="hero-work-link" href="#work">See selected work<ArrowDown size={19}/></a>
+          </div>
         </div>
-        <div className="hero-bottom"><div className="hero-intro"><p>I build with AI.<br/>I think in possibilities.</p><span>Computer science undergraduate exploring<br className="desktop-br"/> AI applications, automation, and visual storytelling.</span></div><a className="circle-cta" href="#work" aria-label="Explore selected work"><span>Explore my work</span><ArrowDown size={25}/></a></div>
-        <div className="hero-baseline"><span>AI applications <i/> Creative technology <i/> Motion design</span><button className="motion-toggle" onClick={() => setMotion(value => !value)} aria-pressed={motion} aria-label={motion ? 'Pause decorative motion' : 'Enable decorative motion'}>{motion ? <Pause size={12}/> : <Play size={12}/>}Motion {motion ? 'on' : 'off'}</button></div>
       </section>
 
-      <section id="work" className="work-section section-pad" aria-labelledby="work-title">
-        <div className="section-heading"><div><p className="section-label"><span className="tiny-square"/>Selected work</p><h2 id="work-title">Ideas, made tangible<span>.</span></h2></div><p>A few things I’ve been building.<br/>Each one, a different kind of curiosity.</p></div>
-        <div className="project-grid engineering">{projects.slice(0, 2).map((p, i) => <ProjectCard key={p.id} project={p} index={i} onOpen={setProject}/>)}</div>
-        <div className="creative-heading"><div><Sparkles size={19}/><h3>And on the creative side.</h3></div><p>Independent concepts with Elara Visuals</p></div>
-        <div className="project-grid creative">{projects.slice(2).map((p, i) => <ProjectCard key={p.id} project={p} index={i + 2} onOpen={setProject}/>)}</div>
-        <a className="text-link github-more" href={profile.github} target="_blank" rel="noreferrer"><Github size={18}/>More experiments on GitHub<ArrowUpRight size={18}/></a>
+      <section id="work" className="section-pad work-section" aria-labelledby="work-title">
+        <div className="section-heading"><h2 id="work-title">Software projects</h2><p>Two prototypes, with source code.<br/>Built around problems I wanted to understand.</p></div>
+        <div className="project-grid engineering">{projects.slice(0, 2).map(p => <ProjectCard key={p.id} project={p} onOpen={setProject}/>)}</div>
+        <div className="section-heading creative-heading"><h2>Films & motion</h2><p>Independent fictional brands.<br/>Developed with Elara Visuals.</p></div>
+        <div className="project-grid creative">{projects.slice(2).map(p => <ProjectCard key={p.id} project={p} onOpen={setProject}/>)}</div>
       </section>
 
-      <section id="about" className="about-section section-pad" aria-labelledby="about-title">
-        <div className="about-top"><p className="section-label"><span className="tiny-square"/>A little about me</p><span className="about-coordinate"><MapPin size={14}/>Bhopal, India</span></div>
-        <div className="about-grid"><div><h2 id="about-title">Equal parts<br/>logic and<br/><span className="creative-word">imagination<span className="asterisk">✳</span></span></h2><div className="education-note"><span className="education-icon"><Code2 size={25}/></span><div><strong>B.Tech, Computer Science</strong><span>Jagran Lakecity University</span><small>2023 — 2027 · Expected May 2027</small></div></div></div><div className="about-copy"><p className="about-lead">I’m Parth, a computer science student who likes turning “what if” into something you can actually use.</p><p>My work moves between AI applications, automation, and visual storytelling. I’m interested in systems that solve useful problems—and the craft that makes them clear, thoughtful, and engaging.</p><p>Teaching robotics taught me to break complex ideas into small, practical steps. That same approach shapes how I build: understand the problem, make a prototype, test it, and keep learning.</p><a className="text-link" href={profile.linkedin} target="_blank" rel="noreferrer">A little more on LinkedIn<ArrowUpRight size={18}/></a></div></div>
-        <div className="capability-list"><div><Cpu size={21}/><h3>AI & applications</h3><p>Python · Machine learning · LLM APIs<br/>Semantic embeddings · AI automation</p></div><div><Code2 size={21}/><h3>Systems & software</h3><p>Django · FastAPI · React · SQL<br/>PostgreSQL · Git · Docker</p></div><div><Sparkles size={21}/><h3>Creative & human</h3><p>Motion design · Visual storytelling<br/>STEM mentoring · Technical documentation</p></div></div>
+      <section id="about" className="section-pad about-section" aria-labelledby="about-title">
+        <div className="about-grid">
+          <div className="about-heading"><p className="section-label">About</p><h2 id="about-title">From robotics<br/>to software<br/>and film.</h2></div>
+          <div className="about-copy">
+            <p className="about-lead">I’m studying computer science at Jagran Lakecity University in Bhopal, graduating in 2027.</p>
+            <p>In 2025, I taught robotics and programming to school students. The work included Arduino projects, ESP32-CAM learning kits, and helping students troubleshoot their prototypes.</p>
+            <p>My software projects explore job matching and Linux incident management. Alongside that, I’m developing a creative practice in motion design and AI-assisted product films.</p>
+            <a className="text-link" href={profile.linkedin} target="_blank" rel="noreferrer">Connect on LinkedIn<ArrowUpRight size={17}/></a>
+          </div>
+        </div>
+        <div className="toolbox"><h3>Tools I work with</h3><div>
+          <p><strong>Software</strong>Python, SQL, JavaScript, Django, FastAPI, React</p>
+          <p><strong>AI & infrastructure</strong>LLM APIs, semantic embeddings, PostgreSQL, Git, Docker</p>
+          <p><strong>Creative practice</strong>Blender, motion design, AI-assisted film production</p>
+        </div></div>
+        <div className="education-note"><span>Education</span><p>B.Tech in Computer Science<br/><span>Jagran Lakecity University, 2023–2027</span></p><span>Expected May 2027</span></div>
       </section>
 
-      <section id="experience" className="experience-section section-pad" aria-labelledby="experience-title"><div className="section-heading"><div><p className="section-label"><span className="tiny-square"/>Along the way</p><h2 id="experience-title">Learning by doing<span>.</span></h2></div><p>Building things. Sharing knowledge.<br/>Growing through both.</p></div><div className="experience-list">{experience.map((item, i) => <article key={item.role} className="experience-row"><div className="experience-date">{item.date}</div><div className="experience-main"><h3>{item.role}</h3><span>{item.company}</span></div><div className="experience-description"><span>{item.location}</span><p>{item.body}</p></div><span className="experience-symbol" aria-hidden="true">{i === 0 ? '↗' : i === 1 ? '⌘' : '✳'}</span></article>)}</div></section>
+      <section id="experience" className="section-pad experience-section" aria-labelledby="experience-title">
+        <div className="section-heading"><h2 id="experience-title">Teaching & leadership</h2></div>
+        <div className="experience-list">{experience.map(item => <article key={item.role} className="experience-row">
+          <p className="experience-date">{item.date}</p>
+          <div className="experience-main"><h3>{item.role}</h3><p>{item.company}</p><span>{item.location}</span></div>
+          <p className="experience-description">{item.body}</p>
+        </article>)}</div>
+      </section>
 
-      <section id="contact" className="contact-section section-pad" aria-labelledby="contact-title"><div className="contact-top"><p className="section-label"><span className="status-dot"/>Let’s make something good</p><span>Ideas. Opportunities. Conversations.</span></div><h2 id="contact-title">Have something<br/>in mind<span>?</span><a href={`mailto:${email}`} aria-label="Start a conversation by email"><MoveUpRight strokeWidth={1.2}/></a></h2><div className="contact-bottom"><div><p>From a useful idea to an interesting opportunity,<br/>I’d love to hear what you’re thinking.</p><div className="email-line"><a href={`mailto:${email}`}>{email}</a><button onClick={copyEmail} aria-label="Copy email address">{copyState === 'copied' ? <Check size={18}/> : <Copy size={18}/>}</button></div><span className="copy-feedback" role="status">{copyState === 'copied' ? 'Email copied.' : copyState === 'failed' ? 'Please select the email address to copy it.' : ''}</span></div><div className="contact-socials"><a href={profile.linkedin} target="_blank" rel="noreferrer"><Linkedin size={17}/>LinkedIn<ArrowUpRight size={16}/></a><a href={profile.github} target="_blank" rel="noreferrer"><Github size={17}/>GitHub<ArrowUpRight size={16}/></a><a href={profile.resume} download><Download size={17}/>Resume<ArrowDown size={16}/></a></div></div></section>
+      <section id="contact" className="section-pad contact-section" aria-labelledby="contact-title">
+        <p className="section-label">Contact</p>
+        <div className="contact-heading"><h2 id="contact-title">Let’s talk.</h2><p>For an AI or software opportunity,<br/>a product-film brief, or a collaboration.</p></div>
+        <div className="contact-bottom">
+          <div className="contact-address">
+            <div className="email-line"><a href={`mailto:${email}`}>{email}</a><button onClick={copyEmail} aria-label="Copy email address">{copyState === 'copied' ? <Check size={19}/> : <Copy size={19}/>}</button></div>
+            <p className="copy-feedback" role="status">{copyState === 'copied' ? 'Email copied.' : copyState === 'failed' ? 'Select the email address to copy it.' : ''}</p>
+          </div>
+          <div className="contact-socials">
+            <a href={profile.linkedin} target="_blank" rel="noreferrer"><Linkedin size={18}/>LinkedIn</a>
+            <a href={profile.github} target="_blank" rel="noreferrer"><Github size={18}/>GitHub</a>
+            <a href={profile.resume} download><Download size={18}/>Resume</a>
+          </div>
+        </div>
+      </section>
     </main>
-    <footer><a className="wordmark" href="#home" aria-label="Return to top">pm<span>●</span></a><span>© {new Date().getFullYear()} Parth Mahajan</span><a href="#home">Back to the top<ArrowRight size={16} className="back-arrow"/></a></footer>
-    <nav className="floating-nav" aria-label="Main navigation">{navItems.map(({ id, label, icon: Icon }) => <a key={id} href={`#${id}`} className={active === id ? 'active' : ''} aria-current={active === id ? 'location' : undefined}><Icon size={15}/><span>{label}</span>{id === 'contact' && <ArrowUpRight size={13} className="nav-arrow"/>}</a>)}</nav>
+    <footer><span>© {new Date().getFullYear()} Parth Mahajan</span><span>Bhopal, India</span><a href="#home">Back to top<ArrowUp size={16}/></a></footer>
     <ProjectDialog project={project} onClose={() => setProject(null)}/>
   </>;
 }

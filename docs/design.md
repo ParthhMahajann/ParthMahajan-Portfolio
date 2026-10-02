@@ -1,5 +1,9 @@
 # Parth Mahajan portfolio
 
+## Version 2 revision
+
+The original direction below is retained as history. The current revision replaces the decorative knot with original ORVEN project media, moves navigation into the header, uses concrete résumé-grounded copy, and exposes prototype status and source links. Technical artwork explains actual project mechanisms. React/Vite remains; Three.js and the decorative animation loop are removed. See [the V2 review](review-v2/REVIEW.md) for findings, screenshots, comparison scores, and verification.
+
 ## Direction
 The supplied resume is the primary content source. Build a single-page, responsive portfolio in the existing repository, with technical work first and a complementary creative practice. Use the supplied dark/amber references, Marcus Lorenzet's oversized type and persistent navigation, and Pamidor's interdisciplinary project storytelling. No copied site assets or invented portrait.
 

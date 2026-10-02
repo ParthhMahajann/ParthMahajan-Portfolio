@@ -11,7 +11,7 @@ The supplied resume governs name, email, location, education, expected graduatio
 - LOOPPOP: `E:\elara-social\LOOPPOP-Pop-a-Different-Rhythm\DELIVERY.md` and landscape poster/24-second film from its `delivery` directory. Independent fictional concept associated with Elara Visuals; not client results or sole-authorship claims.
 - ORVEN: `E:\elara-social\orven-in-bloom\delivery\film-v2-botanical\READ-ME.md`, `hero-hold.png`, and `ORVEN-In-Bloom-v2-Botanical-24s.mp4`. The review film is retained unchanged, including its watermark.
 
-NextStep and SentinelD cover artwork are original illustrative project treatments made for this portfolio, not screenshots of live products or real job/incident data. No portrait was provided or reliably identified; the hero uses a procedural abstract sculpture rather than another person's photo.
+Version 2 replaces the original mock interface artwork with explanatory diagrams. NextStep's default weights (40% skills, 30% semantics, 20% preferences, 10% recency) are read from `RankingConfig` in the local ranking service. These are configuration weights, not measured performance. SentinelD's diagram summarizes its telemetry, detection, approval, and execution workflow. Neither diagram is a live product screenshot. The hero now shows the existing ORVEN concept film poster, with an explicit project caption; it does not imply a portrait of Parth.
 
 ## Design references
 

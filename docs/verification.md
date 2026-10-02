@@ -1,4 +1,6 @@
-# Portfolio verification
+# Portfolio verification — historical V1
+
+For the current V2 build, see [the visual review and verification](review-v2/REVIEW.md). The notes below record the original V1 and include the since-removed decorative scene.
 
 Checked against the final local implementation on 30 September 2026.
 
